@@ -5,6 +5,10 @@ const log = logger('@wdio/sync')
 let Fiber
 let Future
 
+const origErrorFn = ::console.error
+const errors = []
+console.error = (...args) => errors.push(args)
+
 /**
  * Helper method to retrieve a version of `fibers` for your Node version.
  */
@@ -34,6 +38,8 @@ if (!Fiber || !Future) {
     }
 }
 
+console.error = origErrorFn
+
 /**
  * throw if no fibers could be loaded
  */
@@ -41,7 +47,7 @@ if (!Fiber || !Future) {
     throw new Error(
         'No proper `fibers` package could be loaded. It might be not ' +
         'supported with your current Node version. Please ensure to use ' +
-        'only WebdriverIOs recommended Node versions.'
+        `only WebdriverIOs recommended Node versions.\n${errors.join('\n')}`
     )
 }
 
