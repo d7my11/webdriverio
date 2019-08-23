@@ -12,6 +12,14 @@ export default async function findElements ({ using, value }) {
 
     let needsCleanUp = false
 
+    if (using === 'link text') {
+        using = 'xpath'
+        value = `.//a[normalize-space() = "${value}"]`
+    } else if (using === 'partial link text') {
+        using = 'xpath'
+        value = `.//a[contains(., "${value}")]`
+    }
+
     if (using === 'xpath') {
         const foundElement = await page.$eval('html', findElementsByXPath, value, null, SERIALIZE_PROPERTY)
 
